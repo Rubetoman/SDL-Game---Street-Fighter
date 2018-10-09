@@ -22,7 +22,9 @@ public:
 	SDL_Texture* graphics = nullptr;
 	SDL_Rect ground;
 	SDL_Rect background;
+	SDL_Rect boat;
 	Animation flag;
+	Animation boat_girl;
 };
 
 #endif // __MODULESCENEKEN_H__
