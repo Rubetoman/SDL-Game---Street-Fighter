@@ -39,10 +39,36 @@ ModuleSceneKen::ModuleSceneKen(bool start_enabled) : Module(start_enabled)
 	flag.speed = 0.08f;
 
 	// TODO 4: Setup Girl Animation from coordinates from ken_stage.png
+	boat_girl.frames.push_back({ 625, 80, 30, 56 });
 	boat_girl.frames.push_back({ 625, 16, 30, 56 });
 	boat_girl.frames.push_back({ 625, 80, 30, 56 });
 	boat_girl.frames.push_back({ 625, 144, 30, 56 });
-	boat_girl.speed = 0.02f;
+	boat_girl.speed = 0.04f;
+
+	// two boat_guys animation
+	boat_guys.frames.push_back({ 552, 72, 65, 66 });
+	boat_guys.frames.push_back({ 552, 8, 65, 66 });
+	boat_guys.frames.push_back({ 552, 72, 65, 66 });
+	boat_guys.frames.push_back({ 552, 136, 65, 66 });
+	boat_guys.speed = 0.03f;
+
+	// boat_boy animation
+	boat_boy.frames.push_back({ 664, 16, 30, 56 });
+	boat_boy.frames.push_back({ 664, 80, 30, 56 });
+	boat_boy.frames.push_back({ 664, 16, 30, 56 });
+	boat_boy.frames.push_back({ 664, 80, 30, 56 });
+	boat_boy.frames.push_back({ 664, 16, 30, 56 });
+	boat_boy.frames.push_back({ 664, 16, 30, 56 });
+	boat_boy.speed = 0.05f;
+
+	// boat_man animation
+	boat_man.frames.push_back({ 704, 80, 48, 56 });
+	boat_man.frames.push_back({ 704, 16, 48, 56 });
+	boat_man.frames.push_back({ 704, 16, 48, 56 });
+	boat_man.frames.push_back({ 704, 16, 48, 56 });
+	boat_man.frames.push_back({ 704, 80, 48, 56 });
+	boat_man.frames.push_back({ 704, 144, 48, 56 });
+	boat_man.speed = 0.04f;
 }
 
 ModuleSceneKen::~ModuleSceneKen()
@@ -77,6 +103,31 @@ bool ModuleSceneKen::CleanUp()
 update_status ModuleSceneKen::Update()
 {
 	// TODO 5: make sure the ship goes up and down
+	ticks_since_move++;
+
+	if (ticks_since_move > 80)
+	{
+		ticks_since_move = 0;
+		if (increasing_offset)
+		{
+			++offset;
+		}
+		else
+		{
+			--offset;
+		}
+		if (offset > 3)
+		{
+			increasing_offset = false;
+			ticks_since_move = -100;
+		}
+		else if (offset < 1)
+		{
+			increasing_offset = true;
+			ticks_since_move = -100;
+		}
+	}
+
 
 	// Draw everything --------------------------------------
 	// TODO 1: Tweak the movement speed of the sea&sky + flag to your taste
@@ -84,10 +135,15 @@ update_status ModuleSceneKen::Update()
 	App->renderer->Blit(graphics, 560, 8, &(flag.GetCurrentFrame()), 1.8f); // flag animation
 
 	// TODO 3: Draw the ship. Be sure to tweak the speed.
-	App->renderer->Blit(graphics, 0, 0, &boat, 1.4f);
+	App->renderer->Blit(graphics, 0, 0 + offset, &boat, 1.4f);
 
 	// TODO 6: Draw the girl. Make sure it follows the ship movement!
-	App->renderer->Blit(graphics, 191, 103, &(boat_girl.GetCurrentFrame()), 1.4f); // boat_girl animation
+	App->renderer->Blit(graphics, 191, 103 + offset, &(boat_girl.GetCurrentFrame()), 1.4f); // boat_girl animation
+	
+	// Draw rest of the animations
+	App->renderer->Blit(graphics, 127, 95 + offset, &(boat_guys.GetCurrentFrame()), 1.4f); // boat_guys animation
+	App->renderer->Blit(graphics, 223, 103 + offset, &(boat_boy.GetCurrentFrame()), 1.4f); // boat_boy animation
+	App->renderer->Blit(graphics, 287, 95 + offset, &(boat_man.GetCurrentFrame()), 1.4f); // boat_man animation
 	App->renderer->Blit(graphics, 0, 170, &ground);
 
 	// TODO 10: Build an entire new scene "honda", you can find its

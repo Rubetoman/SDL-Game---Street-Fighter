@@ -25,6 +25,14 @@ public:
 	SDL_Rect boat;
 	Animation flag;
 	Animation boat_girl;
+	Animation boat_guys;
+	Animation boat_boy;
+	Animation boat_man;
+
+private:
+	int offset = 1;					// Offset for the boat y position
+	bool increasing_offset = true;	// Is the offset being increased or decreased?
+	int ticks_since_move = 0;		// Number of ticks since the offset was applied
 };
 
 #endif // __MODULESCENEKEN_H__
