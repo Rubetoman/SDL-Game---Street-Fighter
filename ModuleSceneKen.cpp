@@ -82,6 +82,7 @@ bool ModuleSceneKen::Start()
 	graphics = App->textures->Load("ken_stage.png");
 
 	// TODO 7: Enable the player module
+	App->player->Enable();
 	// TODO 0: trigger background music
 	App->audio->PlayMusic("ken.ogg", 2.0f);
 	
@@ -141,9 +142,9 @@ update_status ModuleSceneKen::Update()
 	App->renderer->Blit(graphics, 191, 103 + offset, &(boat_girl.GetCurrentFrame()), 1.4f); // boat_girl animation
 	
 	// Draw rest of the animations
-	App->renderer->Blit(graphics, 127, 95 + offset, &(boat_guys.GetCurrentFrame()), 1.4f); // boat_guys animation
-	App->renderer->Blit(graphics, 223, 103 + offset, &(boat_boy.GetCurrentFrame()), 1.4f); // boat_boy animation
-	App->renderer->Blit(graphics, 287, 95 + offset, &(boat_man.GetCurrentFrame()), 1.4f); // boat_man animation
+	App->renderer->Blit(graphics, 127, 95 + offset, &(boat_guys.GetCurrentFrame()), 1.4f);	// boat_guys animation
+	App->renderer->Blit(graphics, 223, 103 + offset, &(boat_boy.GetCurrentFrame()), 1.4f);	// boat_boy animation
+	App->renderer->Blit(graphics, 287, 95 + offset, &(boat_man.GetCurrentFrame()), 1.4f);	// boat_man animation
 	App->renderer->Blit(graphics, 0, 170, &ground);
 
 	// TODO 10: Build an entire new scene "honda", you can find its
