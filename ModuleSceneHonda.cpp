@@ -44,6 +44,22 @@ ModuleSceneHonda::ModuleSceneHonda(bool start_enabled) : Module(start_enabled)
 	pool.w = 337;
 	pool.h = 57;
 
+	// water animation
+	water.frames.push_back({ 8, 448, 284, 8 });
+	water.frames.push_back({ 296, 448, 284, 12 });
+	water.frames.push_back({ 588, 448, 284, 18 });
+	water.speed = 0.02f;
+
+	// poster animation
+	poster_left.frames.push_back({ 224, 64, 225, 105 });
+	poster_left.frames.push_back({ 456, 64, 225, 105 });
+	poster_left.speed = 0.08f;
+
+	// poster animation
+	poster_right.frames.push_back({ 792, 64, 65, 105 });
+	poster_right.frames.push_back({ 688, 64, 97, 105 });
+	poster_right.speed = 0.08f;
+
 	// flag animation
 	/*flag.frames.push_back({ 848, 208, 40, 40 });
 	flag.frames.push_back({ 848, 256, 40, 40 });
@@ -89,7 +105,7 @@ ModuleSceneHonda::~ModuleSceneHonda()
 // Load assets
 bool ModuleSceneHonda::Start()
 {
-	LOG("Loading ken scene");
+	LOG("Loading Honda scene");
 
 	graphics = App->textures->Load("honda_stage.png");
 	graphics2 = App->textures->Load("honda_stage2.png");
@@ -119,16 +135,17 @@ update_status ModuleSceneHonda::Update()
 	// Draw everything --------------------------------------
 	App->renderer->Blit(graphics2, -111, 160, &ground, 1.5f);	// ground
 	App->renderer->Blit(graphics2, 0, -15, &background, 1.2f);	// background
+	App->renderer->Blit(graphics, 185, 41, &(poster_left.GetCurrentFrame()), 1.2f); // poster animation
+	//App->renderer->Blit(graphics, 408, 41, &(poster_guy.GetCurrentFrame()), 1.2f); // poster animation
 	App->renderer->Blit(graphics2, 105, 156, &bucket, 1.5f);	// bucket
 	App->renderer->Blit(graphics2, 177, 125, &pool, 1.5f);		// pool
-	//App->renderer->Blit(graphics, 560, 8, &(flag.GetCurrentFrame()), 1.8f); // flag animation
+	App->renderer->Blit(graphics, 205, 137, &(water.GetCurrentFrame()), 1.5f); // water animation
 	App->renderer->Blit(graphics, -58, -15, &ceiling, 1.5f);	// ceiling
 
 	// Pressing space triggers a switch to ken logic module
 	// using FadeToBlack module
 	if (App->input->GetKey(SDL_SCANCODE_SPACE)) {
-		//CleanUp();
-		//App->fade->FadeToBlack(App->scene_ken, nullptr, 3.0f);
+		App->fade->FadeToBlack(App->scene_ken, this, 3.0f);
 	}
 	return UPDATE_CONTINUE;
 }

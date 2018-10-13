@@ -26,6 +26,9 @@ public:
 	SDL_Rect ceiling;
 	SDL_Rect bucket;
 	SDL_Rect pool;
+	Animation water;
+	Animation poster_left;
+	Animation poster_right;
 	/*Animation flag;
 	Animation boat_girl;
 	Animation boat_guys;

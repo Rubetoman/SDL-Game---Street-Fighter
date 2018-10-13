@@ -33,6 +33,18 @@ ModuleSceneKen::ModuleSceneKen(bool start_enabled) : Module(start_enabled)
 	background.w = 768;
 	background.h = 176;
 
+	// bitt
+	bitt.x = 760;
+	bitt.y = 176;
+	bitt.w = 31;
+	bitt.h = 24;
+
+	// bitt_small
+	bitt_small.x = 800;
+	bitt_small.y = 184;
+	bitt_small.w = 22;
+	bitt_small.h = 16;
+
 	// flag animation
 	flag.frames.push_back({848, 208, 40, 40});
 	flag.frames.push_back({848, 256, 40, 40});
@@ -70,6 +82,18 @@ ModuleSceneKen::ModuleSceneKen(bool start_enabled) : Module(start_enabled)
 	boat_man.frames.push_back({ 704, 80, 48, 56 });
 	boat_man.frames.push_back({ 704, 144, 48, 56 });
 	boat_man.speed = 0.04f;
+
+	// boat_upper_guy1 animation (upper part of the boat with brown jacket)
+	boat_upper_guy1.frames.push_back({ 760, 16, 40, 40 });
+	boat_upper_guy1.frames.push_back({ 760, 64, 40, 40 });
+	boat_upper_guy1.frames.push_back({ 760, 112, 40, 40 });
+	boat_upper_guy1.speed = 0.04f;
+	
+	// boat_upper_guy1 animation (upper part of the boat with purple cloths)
+	boat_upper_guy2.frames.push_back({ 808, 24, 44, 34 });
+	boat_upper_guy2.frames.push_back({ 808, 72, 44, 34 });
+	boat_upper_guy2.frames.push_back({ 808, 120, 44, 34 });
+	boat_upper_guy2.speed = 0.03f;
 }
 
 ModuleSceneKen::~ModuleSceneKen()
@@ -97,7 +121,6 @@ bool ModuleSceneKen::CleanUp()
 
 	App->textures->Unload(graphics);
 	App->player->Disable();
-	
 	return true;
 }
 
@@ -107,7 +130,7 @@ update_status ModuleSceneKen::Update()
 	// TODO 5: make sure the ship goes up and down
 	ticks_since_move++;
 
-	if (ticks_since_move > 80)
+	if (ticks_since_move > 50)
 	{
 		ticks_since_move = 0;
 		if (increasing_offset)
@@ -133,20 +156,25 @@ update_status ModuleSceneKen::Update()
 
 	// Draw everything --------------------------------------
 	// TODO 1: Tweak the movement speed of the sea&sky + flag to your taste
-	App->renderer->Blit(graphics, 0, 0, &background, 1.8f); // sea and sky
-	App->renderer->Blit(graphics, 560, 8, &(flag.GetCurrentFrame()), 1.8f); // flag animation
+	App->renderer->Blit(graphics, 0, -5, &background, 1.8f); // sea and sky
+	App->renderer->Blit(graphics, 560, 3, &(flag.GetCurrentFrame()), 1.8f); // flag animation
 
 	// TODO 3: Draw the ship. Be sure to tweak the speed.
-	App->renderer->Blit(graphics, 0, 0 + offset, &boat, 1.4f);
+	App->renderer->Blit(graphics, 0, -5 + offset, &boat, 1.4f);
 
 	// TODO 6: Draw the girl. Make sure it follows the ship movement!
-	App->renderer->Blit(graphics, 191, 103 + offset, &(boat_girl.GetCurrentFrame()), 1.4f); // boat_girl animation
+	App->renderer->Blit(graphics, 191, 98 + offset, &(boat_girl.GetCurrentFrame()), 1.4f); // boat_girl animation
 	
 	// Draw rest of the animations
-	App->renderer->Blit(graphics, 127, 95 + offset, &(boat_guys.GetCurrentFrame()), 1.4f);	// boat_guys animation
-	App->renderer->Blit(graphics, 223, 103 + offset, &(boat_boy.GetCurrentFrame()), 1.4f);	// boat_boy animation
-	App->renderer->Blit(graphics, 287, 95 + offset, &(boat_man.GetCurrentFrame()), 1.4f);	// boat_man animation
-	App->renderer->Blit(graphics, 0, 170, &ground);
+	App->renderer->Blit(graphics, 127, 90 + offset, &(boat_guys.GetCurrentFrame()), 1.4f);	// boat_guys animation
+	App->renderer->Blit(graphics, 223, 98 + offset, &(boat_boy.GetCurrentFrame()), 1.4f);	// boat_boy animation
+	App->renderer->Blit(graphics, 287, 90 + offset, &(boat_man.GetCurrentFrame()), 1.4f);	// boat_man animation
+	App->renderer->Blit(graphics, 86, 20 + offset, &(boat_upper_guy1.GetCurrentFrame()), 1.4f);	// boat_upper_guy1 animation
+	App->renderer->Blit(graphics, 128, 18 + offset, &(boat_upper_guy2.GetCurrentFrame()), 1.4f);	// boat_upper_guy2 animation
+	
+	App->renderer->Blit(graphics, 0, 165, &ground);
+	//App->renderer->Blit(graphics, 162, 158, &bitt);
+	App->renderer->Blit(graphics, 380, 162, &bitt_small);
 
 	// TODO 10: Build an entire new scene "honda", you can find its
 	// and music in the Game/ folder
@@ -155,8 +183,7 @@ update_status ModuleSceneKen::Update()
 	// using FadeToBlack module
 	// Start the first scene --
 	if (App->input->GetKey(SDL_SCANCODE_SPACE)) {
-		CleanUp();
-		App->fade->FadeToBlack(App->scene_honda, nullptr, 3.0f);
+		App->fade->FadeToBlack(App->scene_honda, this, 3.0f);
 	}
 
 	return UPDATE_CONTINUE;
