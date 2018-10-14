@@ -12,6 +12,12 @@ ModulePlayer::ModulePlayer(bool start_enabled) : Module(start_enabled)
 	position.x = 191;
 	position.y = 103;
 
+	// crouch_idle sprite
+	crouch_idle.x = 197;
+	crouch_idle.y = 1211;
+	crouch_idle.w = 62;
+	crouch_idle.h = 86;
+
 	// idle animation (arcade sprite sheet)
 	idle.frames.push_back({7, 14, 60, 90});
 	idle.frames.push_back({95, 15, 60, 89});
@@ -37,6 +43,21 @@ ModulePlayer::ModulePlayer(bool start_enabled) : Module(start_enabled)
 	forward.frames.push_back({ 352, 127, 61, 93 });
 	forward.frames.push_back({ 432, 127, 61, 93 });
 	forward.speed = 0.1f;
+
+	// crouch animation
+	crouch.frames.push_back({ 32, 1211, 54, 86 });
+	crouch.frames.push_back({ 115, 1211, 58, 86 });
+	crouch.frames.push_back({ 197, 1211, 62, 86 });
+	crouch.speed = 0.1f;
+
+	// stand_up animation
+	stand_up.frames.push_back({ 197, 1211, 62, 86 });
+	stand_up.frames.push_back({ 115, 1211, 58, 86 });
+	stand_up.frames.push_back({ 32, 1211, 54, 86 });
+	stand_up.speed = 0.1f;
+
+	// Set player 1 pose
+	player1_pose = STANDING;
 }
 
 ModulePlayer::~ModulePlayer()
@@ -70,18 +91,53 @@ update_status ModulePlayer::Update()
 	// TODO 9: Draw the player with its animation
 	// make sure to detect player movement and change its
 	// position while cycling the animation(check Animation.h)
-	if (App->input->GetKey(SDL_SCANCODE_A)) {
-		--position.x;
-		App->renderer->Blit(graphics, position.x, position.y, &(backward.GetCurrentFrame()), 1.4f);	// Ryu backward animation
-	}
-	else if (App->input->GetKey(SDL_SCANCODE_D))
+
+	switch (player1_pose)
 	{
-		++position.x;
-		App->renderer->Blit(graphics, position.x, position.y, &(forward.GetCurrentFrame()), 1.4f);	// Ryu forward animation
-	}else
-	{
-		App->renderer->Blit(graphics, position.x, position.y, &(idle.GetCurrentFrame()), 1.4f);	// Ryu idle animation
+	case STANDING:
+		if (App->input->GetKey(SDL_SCANCODE_A))			// Ryu backward animation
+		{
+			--position.x;
+			App->renderer->Blit(graphics, position.x, position.y, &(backward.GetCurrentFrame()), 1.4f);	
+		}
+		else if (App->input->GetKey(SDL_SCANCODE_D))	// Ryu forward animation
+		{
+			++position.x;
+			App->renderer->Blit(graphics, position.x, position.y, &(forward.GetCurrentFrame()), 1.4f);	
+		}
+		else if (App->input->GetKey(SDL_SCANCODE_S))	// Ryu crouch animatiom
+		{
+			App->renderer->Blit(graphics, position.x, position.y, &(stand_up.GetCurrentFrame()), 1.4f);
+			player1_pose = CROUCHING;
+		}
+		else if (App->input->GetKey(SDL_SCANCODE_W))	// Ryu jump animation
+		{
+
+		}
+		else if (App->input->GetKey(SDL_SCANCODE_U))	// Ryu light_punch animation
+		{
+
+		}
+		else											// Ryu idle animation
+		{
+			App->renderer->Blit(graphics, position.x, position.y, &(idle.GetCurrentFrame()), 1.4f);
+		}
+		break;
+	case CROUCHING:
+		if (!App->input->GetKey(SDL_SCANCODE_S))		// Ryu stand_up animation
+		{
+			App->renderer->Blit(graphics, position.x, position.y, &(stand_up.GetCurrentFrame()), 1.4f);
+			player1_pose = STANDING;
+		}
+		else											// Ryu crouch idle animation
+		{
+			App->renderer->Blit(graphics, position.x, position.y, &crouch_idle, 1.4f);
+		}
+		break;
+	case JUMPING:
+		break;
 	}
+	
 	
 	return UPDATE_CONTINUE;
 }
