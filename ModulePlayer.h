@@ -33,6 +33,12 @@ public:
 	Animation forward;
 	Animation crouch;
 	Animation stand_up;
+	Animation light_punch;
+	Animation medium_punch;
+	Animation heavy_punch;
+	Animation crouch_light_punch;
+	Animation crouch_medium_punch;
+	Animation crouch_heavy_punch;
 	iPoint position;
 	pose player1_pose;
 };

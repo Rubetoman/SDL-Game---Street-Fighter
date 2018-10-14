@@ -23,4 +23,16 @@ public:
 			current_frame = 0.0f;
 		return frames[(int)current_frame];
 	}
+
+	int GetCurrentFrameNumber()
+	{
+		return (int)current_frame;
+	}
+
+	bool IsLastFrame()
+	{
+		if (current_frame >= frames.size())
+			return true;
+		return false;
+	}
 };
