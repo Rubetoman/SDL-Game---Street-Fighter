@@ -24,15 +24,20 @@ public:
 		return frames[(int)current_frame];
 	}
 
-	int GetCurrentFrameNumber()
+	inline int GetCurrentFrameNumber()
 	{
 		return (int)current_frame;
 	}
 
-	bool IsLastFrame()
+	inline bool IsLastFrame()
 	{
-		if (current_frame >= frames.size())
+		if (current_frame >= frames.size() - 1)
 			return true;
 		return false;
+	}
+
+	inline void ResetAnimation() 
+	{
+		current_frame = 0.0f;
 	}
 };
