@@ -13,6 +13,7 @@ enum pose
 	CROUCHING,
 	JUMPING
 };
+const float Player_Anim_Speed = 1.4f;
 
 class ModulePlayer : public Module
 {
@@ -24,10 +25,15 @@ public:
 	update_status Update();
 	bool CleanUp();
 
+	void PlayFullAnimation();
+	void StandingInput();
+	void CrouchingInput();
+	void JumpingingInput();
 public:
 
 	SDL_Texture* graphics = nullptr;
 	SDL_Rect crouch_idle;
+	SDL_Rect player;
 	Animation idle;
 	Animation backward;
 	Animation forward;
@@ -40,7 +46,9 @@ public:
 	Animation crouch_medium_punch;
 	Animation crouch_heavy_punch;
 	iPoint position;
-	pose player1_pose;
+	pose player_state;
+	Animation* playing_animation;
+	pose next_state;
 };
 
 #endif // __MODULEPLAYER_H__

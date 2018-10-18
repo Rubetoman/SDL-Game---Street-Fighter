@@ -59,7 +59,8 @@ ModulePlayer::ModulePlayer(bool start_enabled) : Module(start_enabled)
 	// light_punch animation
 	light_punch.frames.push_back({ 19, 269, 64, 93 });
 	light_punch.frames.push_back({ 108, 269, 92, 93 });
-	light_punch.speed = 0.08f;
+	light_punch.frames.push_back({ 19, 269, 64, 93 });
+	light_punch.speed = 0.06f;
 
 	// medium_punch animation
 	medium_punch.frames.push_back({ 252, 269, 60, 94 });
@@ -75,12 +76,13 @@ ModulePlayer::ModulePlayer(bool start_enabled) : Module(start_enabled)
 	heavy_punch.frames.push_back({ 432, 269, 109, 94 });
 	heavy_punch.frames.push_back({ 333, 269, 75, 94 });
 	heavy_punch.frames.push_back({ 252, 269, 60, 94 });
-	heavy_punch.speed = 0.06f;
+	heavy_punch.speed = 0.04f;
 
 	// crouch_light_punch animation
 	crouch_light_punch.frames.push_back({ 24, 1313, 69, 93 });
 	crouch_light_punch.frames.push_back({ 118, 1313, 96, 93 });
-	crouch_light_punch.speed = 0.08f;
+	crouch_light_punch.frames.push_back({ 24, 1313, 69, 93 });
+	crouch_light_punch.speed = 0.06f;
 
 	// crouch_medium_punch animation
 	crouch_medium_punch.frames.push_back({ 264, 1313, 66, 93 });
@@ -96,10 +98,12 @@ ModulePlayer::ModulePlayer(bool start_enabled) : Module(start_enabled)
 	crouch_heavy_punch.frames.push_back({ 450, 1313, 92, 93 });
 	crouch_heavy_punch.frames.push_back({ 359, 1313, 66, 93 });
 	crouch_heavy_punch.frames.push_back({ 264, 1313, 66, 93 });
-	crouch_heavy_punch.speed = 0.06f;
+	crouch_heavy_punch.speed = 0.04f;
 	
 	// Set player 1 pose
-	player1_pose = STANDING;
+	player_state = STANDING;
+
+	playing_animation = nullptr;
 }
 
 ModulePlayer::~ModulePlayer()
@@ -134,74 +138,121 @@ update_status ModulePlayer::Update()
 	// make sure to detect player movement and change its
 	// position while cycling the animation(check Animation.h)
 
-	switch (player1_pose)
+	if (playing_animation != nullptr)
 	{
-	case STANDING:
-		if (App->input->GetKey(SDL_SCANCODE_U))			// Ryu light_punch animation
-		{
-			App->renderer->Blit(graphics, position.x, position.y, &(light_punch.GetCurrentFrame()), 1.4f);
-		}
-		else if (App->input->GetKey(SDL_SCANCODE_I))	// Ryu medium_punch animation
-		{
-			App->renderer->Blit(graphics, position.x, position.y, &(medium_punch.GetCurrentFrame()), 1.4f);
-		}
-		else if (App->input->GetKey(SDL_SCANCODE_O))	// Ryu heavy_punch animation
-		{
-			App->renderer->Blit(graphics, position.x, position.y, &(heavy_punch.GetCurrentFrame()), 1.4f);
-		}
-		else if (App->input->GetKey(SDL_SCANCODE_S))	// Ryu crouch animatiom
-		{
-			App->renderer->Blit(graphics, position.x, position.y, &(crouch.GetCurrentFrame()), 1.4f);
-			player1_pose = CROUCHING;
-		}
-		else if (App->input->GetKey(SDL_SCANCODE_W))	// Ryu jump animation
-		{
-			player1_pose = JUMPING;
-		}
-		else if (App->input->GetKey(SDL_SCANCODE_A))	// Ryu backward animation
-		{
-			--position.x;
-			App->renderer->Blit(graphics, position.x, position.y, &(backward.GetCurrentFrame()), 1.4f);
-		}
-		else if (App->input->GetKey(SDL_SCANCODE_D))	// Ryu forward animation
-		{
-			++position.x;
-			App->renderer->Blit(graphics, position.x, position.y, &(forward.GetCurrentFrame()), 1.4f);
-		}
-		else											// Ryu idle animation
-		{
-			App->renderer->Blit(graphics, position.x, position.y, &(idle.GetCurrentFrame()), 1.4f);
-		}
-		break;
-
-	case CROUCHING:
-		if (App->input->GetKey(SDL_SCANCODE_U))			// Ryu light_punch animation
-		{
-			App->renderer->Blit(graphics, position.x, position.y, &(crouch_light_punch.GetCurrentFrame()), 1.4f);
-		}
-		else if (App->input->GetKey(SDL_SCANCODE_I))	// Ryu medium_punch animation
-		{
-			App->renderer->Blit(graphics, position.x, position.y, &(crouch_medium_punch.GetCurrentFrame()), 1.4f);
-		}
-		else if (App->input->GetKey(SDL_SCANCODE_O))	// Ryu heavy_punch animation
-		{
-			App->renderer->Blit(graphics, position.x, position.y, &(crouch_heavy_punch.GetCurrentFrame()), 1.4f);
-		}
-		else if (!App->input->GetKey(SDL_SCANCODE_S))	// Ryu stand_up animation
-		{
-			App->renderer->Blit(graphics, position.x, position.y, &(stand_up.GetCurrentFrame()), 1.4f);
-			player1_pose = STANDING;
-		}
-		else											// Ryu crouch idle animation
-		{
-			App->renderer->Blit(graphics, position.x, position.y, &crouch_idle, 1.4f);
-		}
-		break;
-
-	case JUMPING:
-		break;
+		PlayFullAnimation();
 	}
+	else
+	{
+		switch (player_state)
+		{
+		case STANDING:
+			StandingInput();
+			break;
+
+		case CROUCHING:
+			CrouchingInput();
+			break;
+
+		case JUMPING:
+			JumpingingInput();
+			break;
+		default:
+			player = idle.GetCurrentFrame();
+		}
+	}
+
+	App->renderer->Blit(graphics, position.x, position.y, &player, Player_Anim_Speed);
 	
 	
 	return UPDATE_CONTINUE;
+}
+
+void ModulePlayer::PlayFullAnimation()
+{
+	if (playing_animation->IsLastFrame())
+	{
+		playing_animation->ResetAnimation();
+		player_state = next_state;
+		playing_animation = nullptr;
+	}
+	else
+	{
+		player = playing_animation->GetCurrentFrame();
+	}
+}
+
+void ModulePlayer::StandingInput()
+{
+	if (App->input->GetKey(SDL_SCANCODE_U))			// Ryu light_punch animation
+	{
+		playing_animation = &light_punch;
+		next_state = player_state;
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_I))	// Ryu medium_punch animation
+	{
+		playing_animation = &medium_punch;
+		next_state = player_state;
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_O))	// Ryu heavy_punch animation
+	{
+		playing_animation = &heavy_punch;
+		next_state = player_state;
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_S))	// Ryu crouch animatiom
+	{
+		playing_animation = &crouch;
+		next_state = CROUCHING;
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_W))	// Ryu jump animation
+	{
+		next_state = JUMPING;
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_A))	// Ryu backward animation
+	{
+		--position.x;
+		player = backward.GetCurrentFrame();
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_D))	// Ryu forward animation
+	{
+		++position.x;
+		player = forward.GetCurrentFrame();
+	}
+	else											// Ryu idle animation
+	{
+		player = idle.GetCurrentFrame();
+	}
+}
+
+void ModulePlayer::CrouchingInput()
+{
+	if (App->input->GetKey(SDL_SCANCODE_U))			// Ryu light_punch animation
+	{
+		playing_animation = &crouch_light_punch;
+		next_state = player_state;
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_I))	// Ryu medium_punch animation
+	{
+		playing_animation = &crouch_medium_punch;
+		next_state = player_state;
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_O))	// Ryu heavy_punch animation
+	{
+		playing_animation = &crouch_heavy_punch;
+		next_state = player_state;
+	}
+	else if (!App->input->GetKey(SDL_SCANCODE_S))	// Ryu stand_up animation
+	{
+		playing_animation = &stand_up;
+		next_state = STANDING;
+	}
+	else											// Ryu crouch idle animation
+	{
+		player = crouch_idle;
+	}
+}
+
+void ModulePlayer::JumpingingInput()
+{
+
 }
