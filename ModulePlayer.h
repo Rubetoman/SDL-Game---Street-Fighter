@@ -45,6 +45,7 @@ public:
 	Animation crouch_light_punch;
 	Animation crouch_medium_punch;
 	Animation crouch_heavy_punch;
+	Animation jump;
 	iPoint position;
 	pose player_state;
 	Animation* playing_animation;

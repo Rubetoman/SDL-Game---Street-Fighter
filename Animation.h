@@ -24,6 +24,14 @@ public:
 		return frames[(int)current_frame];
 	}
 
+	SDL_Rect& GetPreviousFrame()
+	{
+		current_frame -= speed;
+		if (current_frame <= 0)
+			current_frame = 0.0f;
+		return frames[(int)current_frame];
+	}
+
 	inline int GetCurrentFrameNumber()
 	{
 		return (int)current_frame;

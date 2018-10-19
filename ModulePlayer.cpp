@@ -99,6 +99,18 @@ ModulePlayer::ModulePlayer(bool start_enabled) : Module(start_enabled)
 	crouch_heavy_punch.frames.push_back({ 359, 1313, 66, 93 });
 	crouch_heavy_punch.frames.push_back({ 264, 1313, 66, 93 });
 	crouch_heavy_punch.speed = 0.04f;
+
+	// jump animation
+	jump.frames.push_back({ 16, 846, 57, 110 });
+	jump.frames.push_back({ 99, 822, 59, 110 });
+	jump.frames.push_back({ 175, 804, 52, 110 });
+	jump.frames.push_back({ 250, 797, 56, 110 });
+	jump.frames.push_back({ 326, 812, 50, 110 });
+	jump.frames.push_back({ 396, 809, 50, 110 });
+	jump.frames.push_back({ 463, 818, 57, 110 });
+	jump.frames.push_back({ 463, 818, 57, 110 });
+	jump.frames.push_back({ 16, 846, 57, 110 });
+	jump.speed = 0.04f;
 	
 	// Set player 1 pose
 	player_state = STANDING;
@@ -204,9 +216,9 @@ void ModulePlayer::StandingInput()
 		playing_animation = &crouch;
 		next_state = CROUCHING;
 	}
-	else if (App->input->GetKey(SDL_SCANCODE_W))	// Ryu jump animation
+	else if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)	// Ryu jump animation
 	{
-		next_state = JUMPING;
+		player_state = JUMPING;
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_A))	// Ryu backward animation
 	{
@@ -254,5 +266,38 @@ void ModulePlayer::CrouchingInput()
 
 void ModulePlayer::JumpingingInput()
 {
+	if (jump.GetCurrentFrameNumber() < 4)
+	{
+		--position.y;
+	}
+	else if (jump.IsLastFrame())
+	{
+		player = jump.GetCurrentFrame();
+		jump.ResetAnimation();
+		player_state = STANDING;
+	}
+	else
+	{
+		++position.y;
+	}
 
+	if (App->input->GetKey(SDL_SCANCODE_U))			// Ryu light_punch animation
+	{
+		playing_animation = &light_punch;
+		next_state = player_state;
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_I))	// Ryu medium_punch animation
+	{
+		playing_animation = &medium_punch;
+		next_state = player_state;
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_O))	// Ryu heavy_punch animation
+	{
+		playing_animation = &heavy_punch;
+		next_state = player_state;
+	}
+	else
+	{
+		player = jump.GetCurrentFrame();
+	}
 }
