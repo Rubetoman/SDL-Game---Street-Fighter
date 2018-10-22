@@ -187,10 +187,6 @@ update_status ModulePlayer::Update()
 
 void ModulePlayer::PlayFullAnimation()
 {
-	if (player_state == JUMPING)
-	{
-		--position.y;
-	}
 	if (playing_animation->IsLastFrame())
 	{
 		playing_animation->ResetAnimation();
@@ -275,13 +271,11 @@ void ModulePlayer::CrouchingInput()
 
 void ModulePlayer::JumpingingInput()
 {
-	if (!in_jump_attack)
-	{
+	switch (jump_attack) {
+	case 0:
 		if (App->input->GetKey(SDL_SCANCODE_U) == KEY_DOWN)			// Ryu light_punch animation
 		{
-			// playing_animation = &jump_light_punch;
-			// next_state = player_state;
-			in_jump_attack = true;
+			jump_attack = 1;
 			player = jump_light_punch.GetCurrentFrame();
 		}
 		else if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)	// Ryu medium_punch animation
@@ -298,21 +292,26 @@ void ModulePlayer::JumpingingInput()
 		{
 			player = jump.GetCurrentFrame();
 		}
-	}
-	else 
-	{
-		jump_light_punch.SetFrame(1);
+		break;
+	case 1:
+		player = jump_light_punch.GetCurrentFrame();
+		jump_attack = 2;
+		break;
+	case 2:
+	default:
+		break;
 	}
 
 	if (position.y > 10 && up)
 	{
 		--position.y;
 	}
-	else if (position.y == 103)
+	else if (position.y >= 103)
 	{
 		up = true;
 		jump.ResetAnimation();
-		in_jump_attack = false;
+		jump_light_punch.ResetAnimation();
+		jump_attack = 0;
 		player_state = STANDING;
 	}
 	else

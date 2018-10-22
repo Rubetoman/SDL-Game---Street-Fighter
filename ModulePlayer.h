@@ -56,7 +56,7 @@ public:
 
 private:
 	bool up = false;
-	bool in_jump_attack = false;
+	unsigned jump_attack = 0;
 };
 
 #endif // __MODULEPLAYER_H__
