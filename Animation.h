@@ -32,6 +32,18 @@ public:
 		return frames[(int)current_frame];
 	}
 
+	inline void SetFrame(int frame_number)
+	{
+		if (frame_number >= frames.size())
+		{
+			current_frame = frames.size();
+		}
+		else
+		{
+			current_frame = frame_number;
+		}
+	}
+
 	inline int GetCurrentFrameNumber()
 	{
 		return (int)current_frame;
@@ -47,5 +59,10 @@ public:
 	inline void ResetAnimation() 
 	{
 		current_frame = 0.0f;
+	}
+
+	inline int GetNumberOfFrames() 
+	{
+		return frames.size();
 	}
 };

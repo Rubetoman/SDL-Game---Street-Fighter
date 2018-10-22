@@ -111,6 +111,11 @@ ModulePlayer::ModulePlayer(bool start_enabled) : Module(start_enabled)
 	jump.frames.push_back({ 463, 818, 57, 110 });
 	jump.frames.push_back({ 16, 846, 57, 110 });
 	jump.speed = 0.04f;
+
+	// jump_light_punch animation
+	jump_light_punch.frames.push_back({ 28, 984, 55, 110 });
+	jump_light_punch.frames.push_back({ 96, 984, 84, 110 });
+	jump_light_punch.speed = 0.04f;
 	
 	// Set player 1 pose
 	player_state = STANDING;
@@ -182,6 +187,10 @@ update_status ModulePlayer::Update()
 
 void ModulePlayer::PlayFullAnimation()
 {
+	if (player_state == JUMPING)
+	{
+		--position.y;
+	}
 	if (playing_animation->IsLastFrame())
 	{
 		playing_animation->ResetAnimation();
@@ -266,38 +275,50 @@ void ModulePlayer::CrouchingInput()
 
 void ModulePlayer::JumpingingInput()
 {
-	if (jump.GetCurrentFrameNumber() < 4)
+	if (!in_jump_attack)
+	{
+		if (App->input->GetKey(SDL_SCANCODE_U) == KEY_DOWN)			// Ryu light_punch animation
+		{
+			// playing_animation = &jump_light_punch;
+			// next_state = player_state;
+			in_jump_attack = true;
+			player = jump_light_punch.GetCurrentFrame();
+		}
+		else if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)	// Ryu medium_punch animation
+		{
+			playing_animation = &jump_medium_punch;
+			next_state = player_state;
+		}
+		else if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)	// Ryu heavy_punch animation
+		{
+			playing_animation = &jump_heavy_punch;
+			next_state = player_state;
+		}
+		else
+		{
+			player = jump.GetCurrentFrame();
+		}
+	}
+	else 
+	{
+		jump_light_punch.SetFrame(1);
+	}
+
+	if (position.y > 10 && up)
 	{
 		--position.y;
 	}
-	else if (jump.IsLastFrame())
+	else if (position.y == 103)
 	{
-		player = jump.GetCurrentFrame();
+		up = true;
 		jump.ResetAnimation();
+		in_jump_attack = false;
 		player_state = STANDING;
 	}
 	else
 	{
+		up = false;
 		++position.y;
 	}
-
-	if (App->input->GetKey(SDL_SCANCODE_U))			// Ryu light_punch animation
-	{
-		playing_animation = &light_punch;
-		next_state = player_state;
-	}
-	else if (App->input->GetKey(SDL_SCANCODE_I))	// Ryu medium_punch animation
-	{
-		playing_animation = &medium_punch;
-		next_state = player_state;
-	}
-	else if (App->input->GetKey(SDL_SCANCODE_O))	// Ryu heavy_punch animation
-	{
-		playing_animation = &heavy_punch;
-		next_state = player_state;
-	}
-	else
-	{
-		player = jump.GetCurrentFrame();
-	}
+	
 }
