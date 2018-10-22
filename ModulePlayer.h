@@ -46,10 +46,17 @@ public:
 	Animation crouch_medium_punch;
 	Animation crouch_heavy_punch;
 	Animation jump;
+	Animation jump_light_punch;
+	Animation jump_medium_punch;
+	Animation jump_heavy_punch;
 	iPoint position;
 	pose player_state;
 	Animation* playing_animation;
 	pose next_state;
+
+private:
+	bool up = false;
+	bool in_jump_attack = false;
 };
 
 #endif // __MODULEPLAYER_H__
