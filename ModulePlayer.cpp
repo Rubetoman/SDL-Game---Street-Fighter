@@ -172,7 +172,7 @@ update_status ModulePlayer::Update()
 			break;
 
 		case JUMPING:
-			JumpingingInput();
+			JumpingInput();
 			break;
 		default:
 			player = idle.GetCurrentFrame();
@@ -269,7 +269,7 @@ void ModulePlayer::CrouchingInput()
 	}
 }
 
-void ModulePlayer::JumpingingInput()
+void ModulePlayer::JumpingInput()
 {
 	switch (jump_attack) {
 	case 0:
@@ -294,6 +294,7 @@ void ModulePlayer::JumpingingInput()
 		}
 		break;
 	case 1:
+		jump_light_punch.SetFrame(1);
 		player = jump_light_punch.GetCurrentFrame();
 		jump_attack = 2;
 		break;

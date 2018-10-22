@@ -28,7 +28,7 @@ public:
 	void PlayFullAnimation();
 	void StandingInput();
 	void CrouchingInput();
-	void JumpingingInput();
+	void JumpingInput();
 public:
 
 	SDL_Texture* graphics = nullptr;
