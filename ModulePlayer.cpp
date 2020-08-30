@@ -4,7 +4,7 @@
 #include "ModuleInput.h"
 #include "ModuleRender.h"
 #include "ModuleTextures.h"
-#include "SDL/include/SDL.h"
+#include "SDL.h"
 
 // Reference at https://www.youtube.com/watch?v=OEhmUuehGOA
 ModulePlayer::ModulePlayer(bool start_enabled) : Module(start_enabled)
@@ -133,7 +133,7 @@ bool ModulePlayer::Start()
 {
 	LOG("Loading player");
 
-	graphics = App->textures->Load("ryu4.png"); // arcade version
+	graphics = App->textures->Load("resources/ryu4.png"); // arcade version
 
 	return true;
 }

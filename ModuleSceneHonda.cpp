@@ -8,7 +8,7 @@
 #include "ModuleInput.h"
 #include "ModuleAudio.h"
 #include "ModuleFadeToBlack.h"
-#include "SDL/include/SDL.h"
+#include "SDL.h"
 
 // Reference at https://www.youtube.com/watch?v=9WTxwfK0sWc
 
@@ -107,13 +107,13 @@ bool ModuleSceneHonda::Start()
 {
 	LOG("Loading Honda scene");
 
-	graphics = App->textures->Load("honda_stage.png");
-	graphics2 = App->textures->Load("honda_stage2.png");
+	graphics = App->textures->Load("resources/honda_stage.png");
+	graphics2 = App->textures->Load("resources/honda_stage2.png");
 
 	// Enable the player module
 	App->player->Enable();
 	// trigger background music
-	App->audio->PlayMusic("honda.ogg", 2.0f);
+	App->audio->PlayMusic("resources/honda.ogg", 2.0f);
 
 	return true;
 }

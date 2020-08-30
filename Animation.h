@@ -1,5 +1,8 @@
-#pragma once
+#ifndef __ANIMATION_H__
+#define __ANIMATION_H__
+
 #include <vector>
+#include "SDL.h"
 
 using namespace std;
 
@@ -66,3 +69,5 @@ public:
 		return frames.size();
 	}
 };
+
+#endif //__ANIMATION_H__

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __DUMMY_H__
+#define __DUMMY_H__
+
 #include "Module.h"
 #include "Globals.h"
 
@@ -16,3 +18,4 @@ class ModuleDummy : public Module
 		return true;
 	}
 };
+#endif //__DUMMY_H__
