@@ -8,7 +8,7 @@
 #include "ModuleInput.h"
 #include "ModuleAudio.h"
 #include "ModuleFadeToBlack.h"
-#include "SDL/include/SDL.h"
+#include "SDL.h"
 
 // Reference at https://www.youtube.com/watch?v=OEhmUuehGOA
 
@@ -104,12 +104,12 @@ bool ModuleSceneKen::Start()
 {
 	LOG("Loading ken scene");
 	
-	graphics = App->textures->Load("ken_stage.png");
+	graphics = App->textures->Load("resources/ken_stage.png");
 
 	// TODO 7: Enable the player module
 	App->player->Enable();
 	// TODO 0: trigger background music
-	App->audio->PlayMusic("ken.ogg", 2.0f);
+	App->audio->PlayMusic("resources/ken.ogg", 2.0f);
 	
 	return true;
 }
