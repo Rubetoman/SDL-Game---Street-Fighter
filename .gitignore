@@ -261,3 +261,6 @@ __pycache__/
 *.pyc
 
 main
+
+.vscode
+*.dSYM
