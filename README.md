@@ -1,7 +1,20 @@
+## Beating up written in C++ and SDL2
+
 ### Requirements
+* gcc
 * sdl2
 * sdl2-mixer
-* gcc
+* sdl2-image
+* libpng16
+* libvorbis
+* libmikmod
+* libmodplug
+* zlib
+
+### Deps
+```shell
+sudo apt install gcc libsdl2-dev libsdl2-mixer-dev libsdl2-image-dev libpng-dev
+```
 
 ### Build
 ```shell
